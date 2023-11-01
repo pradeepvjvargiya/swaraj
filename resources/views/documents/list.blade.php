@@ -34,7 +34,7 @@
                 <tr>
                     <th scope="col">Id</th>
                     <th scope="col">Title</th>
-                    <th colspan="3">Action</th>
+                    <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -43,25 +43,28 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $document->title }}</td>
                         <td>
-                            <a href="{{ asset('storage/' . $document->filepath) }}" target="_blank" data-toggle="tooltip"
-                                data-placement="top" title="View File">{{ $document->title }}</a>
-                        </td>
-                        <td>
-                            <a href="{{ url('/documents/' . $document->page . '/edit/' . $document->id) }}"
+                            @if (Storage::exists($document->filepath))
+                                <a href="{{ asset('storage/' . $document->filepath) }}" target="_blank"
+                                    data-toggle="tooltip" data-placement="top" title="View File">{{ $document->title }}</a>
+                            @else
+                                <!-- File doesn't exist, so don't generate the link -->
+                                {{ $document->title }}
+                            @endif
+
+                            <a class="text-right mt-2" style="padding:10px;" href="{{ url('/documents/' . $document->page . '/edit/' . $document->id) }}"
                                 class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Edit File"><i
-                                class="fas fa-pencil-alt"></i></a>
-                        </td>
-                        <td>
-                            <a href="{{ url('/documents/' . $document->page . '/delete/' . $document->id) }}"
-                                class="btn btn-primary" onclick="return confirmDelete()" data-toggle="tooltip" data-placement="top" title="Delete Quarter"><i
-                                class="fa fa-trash" aria-hidden="true"></i></a>
+                                    class="fas fa-pencil-alt"></i></a>
+                            <a class="text-right mt-2" style="padding:10px;" href="{{ url('/documents/' . $document->page . '/delete/' . $document->id) }}"
+                                class="btn btn-primary" onclick="return confirmDelete()" data-toggle="tooltip"
+                                data-placement="top" title="Delete Quarter"><i class="fa fa-trash"
+                                    aria-hidden="true"></i></a>
                             <input type="submit" hidden id="delete_btn" name="delete">
                         </td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
-        {{ $documents->links() }}
+        {{-- {{ $documents->links() }} --}}
     </div>
     <script>
         function confirmDelete() {

@@ -43,7 +43,7 @@
     <script>
         // create action
         function add() {
-            if (confirm("Are you wants to add document!")) {
+            if (confirm("Are you wants to add financial year!")) {
                 document.getElementById("add_btn").click();
             }
         }

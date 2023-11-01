@@ -20,6 +20,8 @@ Route::get('/', function () {
     return view('auth/login');
 });
 
+Route::post('/logout', [App\Http\Controllers\LoginController::class, 'logout'])->name('logout');
+
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\FileHelpers;
 use App\Models\Financial;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
 class  FinancialController extends Controller
@@ -32,44 +32,23 @@ class  FinancialController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    // public function storeYear(Request $request)
-    // {
-    //     $request->validate([
-    //         'year' => ['required'],
-    //         'filepath' => ['nullable', 'mimes:pdf,doc'] // Adjust allowed file types as needed
-    //     ]);
-    //     $financials = new Financial();
-    //     if ($request->hasFile('filepath')) {
-    //         $file = $request->file('filepath');
-    //         $originalName = $file->getClientOriginalName();
-    //         $extension = $file->getClientOriginalExtension();
-    //         $words = explode(' ', pathinfo($originalName, PATHINFO_FILENAME));
-    //         $uniqueWords = array_unique($words);
-    //         $cleanFileName = implode(' ', $uniqueWords);
-    //         $file_name = Str::slug($cleanFileName) . '-' . time() . '.' . $extension;
-    //         $dir = "uploads/reports/";
-
-    //         $financials = new Financial();
-    //         $financials->filepath = $request->file('filepath')->storeAs($dir, $file_name);
-    //     } else {
-    //         $financials->filepath = null;
-    //     }
-    //     $financials->year = $request->year;
-    //     $financials->save();
-    //     return redirect()->route('financials.list')->with('success', 'Financial Year added successfully');
-    // }
     public function storeYear(Request $request)
     {
         $request->validate([
             'year' => ['required'],
-            'filepath' => ['nullable', 'mimes:pdf,doc']
+            'filepath' => ['nullable', 'mimes:pdf,doc'] // Adjust allowed file types as needed
         ]);
 
-        $financial = new Financial();
-        $this->processFileUpload($request, $financial);
-        $financial->year = $request->year;
-        $financial->save();
-
+        $financials = new Financial();
+        $financials->year = $request->year;
+        if ($request->hasFile('filepath')) {
+            $dir = FileHelpers::fileUpdate('reports', $request); // Call the fileUpdate method
+            $financials->filepath = $request->file('filepath')->storeAs($dir);
+        } else {
+            // File is not uploaded, set filepath to null
+            $financials->filepath = null;
+        }
+        $financials->save();
         return redirect()->route('financials.list')->with('success', 'Financial Year added successfully');
     }
 
@@ -85,69 +64,44 @@ class  FinancialController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    // public function updateYear($id, Request $request)
-    // {
-    //     $financial = Financial::findOrFail($id);
-    //     $request->validate([
-    //         'year' => ['required'],
-    //         'filepath' => ['nullable', 'mimes:pdf,doc'] // Adjust allowed file types as needed
-    //     ]);
-
-    //     $oldYear = $financial->year; // Store the old year value
-
-    //     // Update the financial record with the new values
-    //     $financial->year = $request->year;
-    //     $financial->quarter = $request->quarter;
-    //     $oldFileName = $financial->filepath;
-
-    //     // Check if a new file is uploaded and update it if necessary
-    //     if ($request->hasFile('filepath')) {
-    //         $originalName = $request->file('filepath')->getClientOriginalName();
-    //         $extension = $request->file('filepath')->getClientOriginalExtension();
-    //         $words = explode(' ', pathinfo($originalName, PATHINFO_FILENAME));
-    //         $uniqueWords = array_unique($words);
-    //         $cleanFileName = implode(' ', $uniqueWords);
-    //         $file_name = Str::slug($cleanFileName) . '-' . time() . '.' . $extension;
-    //         $dir = "uploads/reports/";
-    //         // Store the new file and get its path
-    //         $newFileName = $request->file('filepath')->storeAs($dir, $file_name);
-    //         if ($oldFileName) {
-    //             Storage::move($newFileName, $oldFileName);
-    //             $financial->filepath = $oldFileName;
-    //         } else {
-    //             $financial->filepath = $newFileName;
-    //         }
-    //     }
-    //     // Check if the year has changed before updating the database
-    //     if ($financial->isDirty('year')) {
-    //         // Perform the update only if 'year' has changed
-    //         Financial::where('year', $oldYear)
-    //             ->update(['year' => $request->year]);
-    //     }
-
-    //      $financial->update();
-    //     return redirect()->route('financials.list')->with('success', 'Document updated successfully');
-    // }
     public function updateYear($id, Request $request)
     {
         $financial = Financial::findOrFail($id);
         $request->validate([
             'year' => ['required'],
-            'filepath' => ['nullable', 'mimes:pdf,doc']
+            'filepath' => ['nullable', 'mimes:pdf,doc'] // Adjust allowed file types as needed
         ]);
 
-        $oldYear = $financial->year;
-        $this->processFileUpload($request, $financial);
+        $oldYear = $financial->year; // Store the old year value
+
+        // Update the financial record with the new values
         $financial->year = $request->year;
         $financial->quarter = $request->quarter;
+        $oldFileName = $financial->filepath;
 
+        // Check if a new file is uploaded and update it if necessary
+        if ($request->hasFile('filepath')) {
+            // Use the fileUpdate helper function to determine the folder and get the file path
+            $dir = FileHelpers::fileUpdate('reports', $request);
+
+            // Store the new file and get its path
+            $newFileName = $request->file('filepath')->storeAs($dir);
+            if ($oldFileName) {
+                Storage::move($newFileName, $oldFileName);
+                $financial->filepath = $oldFileName;
+            } else {
+                $financial->filepath = $newFileName;
+            }
+        }
+        // Check if the year has changed before updating the database
         if ($financial->isDirty('year')) {
-            Financial::where('year', $oldYear)->update(['year' => $request->year]);
+            // Perform the update only if 'year' has changed
+            Financial::where('year', $oldYear)
+                ->update(['year' => $request->year]);
         }
 
-        $financial->update();
-
-        return redirect()->route('financials.list')->with('success', 'Document updated successfully');
+         $financial->update();
+        return redirect()->route('financials.list')->with('success', 'Financial Year updated successfully');
     }
 
     /**
@@ -157,18 +111,27 @@ class  FinancialController extends Controller
     {
         // Find the year to be deleted
         $year = Financial::findOrFail($id);
-    
+
         // Get the ID of the year's related quarters
         $quarterIds = Financial::where('year', $year->year)->pluck('id')->toArray();
-    
+
+        // Iterate through the quarters, retrieve file paths, and delete files
+        foreach ($quarterIds as $quarterId) {
+            $quarter = Financial::findOrFail($quarterId);
+            $filePath = $quarter->filepath;
+
+            // Delete the associated file if it exists
+            if ($filePath && Storage::exists($filePath)) {
+                Storage::delete($filePath);
+            }
+        }
+
         // Delete the year and its related quarters
         Financial::where('year', $year->year)->delete();
-    
-        // You can also delete associated files, if necessary, using the $quarterIds
-    
-        return redirect()->route('financials.list')->with('success', 'Year and related quarters deleted successfully');
+
+        return redirect()->route('financials.list')->with('success', 'Year and related quarters and files deleted successfully');
     }
-    
+
     
     /**
      * Show the form for creating a new resource.
@@ -185,53 +148,30 @@ class  FinancialController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    // public function storeQuarter($year, $quarter, Request $request)
-    // {
-    //     $request->validate([
-    //         'title' => ['required', 'string', 'max:100'],
-    //         'filepath' => ['required', 'mimes:pdf,doc'] // Adjust allowed file types as needed
-    //     ]);
-
-    //     $file = $request->file('filepath');
-    //     $originalName = $file->getClientOriginalName();
-    //     $extension = $file->getClientOriginalExtension();
-    //     $words = explode(' ', pathinfo($originalName, PATHINFO_FILENAME));
-    //     $uniqueWords = array_unique($words);
-    //     $cleanFileName = implode(' ', $uniqueWords);
-    //     $file_name = Str::slug($cleanFileName) . '-' . time() . '.' . $extension;
-
-    //     $dir = "uploads/reports/";
-    //     // Store the file using the Storage facade
-    //     $filepath = $file->storePubliclyAs($dir, $file_name);
-
-    //     $financial = new Financial();
-    //     $financial->year = $year;
-    //     $financial->quarter = $quarter;
-    //     $financial->title = $request->title;
-    //     $financial->filepath = $filepath; // Store the path in the database, not the full URL
-
-    //     $financial->save();
-
-    //     return redirect("financials/list")->with('success', 'Quarter added successfully');
-    // }
-
     public function storeQuarter($year, $quarter, Request $request)
     {
         $request->validate([
             'title' => ['required', 'string', 'max:100'],
-            'filepath' => ['required', 'mimes:pdf,doc']
+            'filepath' => ['nullable', 'mimes:pdf,doc'] // Adjust allowed file types as needed
         ]);
 
         $financial = new Financial();
         $financial->year = $year;
         $financial->quarter = $quarter;
         $financial->title = $request->title;
+        if ($request->hasFile('filepath')) {
+            // Get the directory path from the FileHelper
+            $dir = FileHelpers::fileUpdate('reports', $request);
 
-        $this->processFileUpload($request, $financial);
+            // Store the image only if a file is provided
+            $financial->filepath = $request->file('filepath')->storeAs($dir);
+        } else {
+            // Handle the case when 'filepath' is empty or not provided
+            $financial->filepath = '';
+        }
 
         $financial->save();
-
-        return redirect()->route('financials.list')->with('success', 'Quarter added successfully');
+        return redirect("financials/list")->with('success', 'Quarter added successfully');
     }
 
     /**
@@ -242,82 +182,40 @@ class  FinancialController extends Controller
         // Retrieve the financial record based on the 'id'
         $financial = Financial::findOrFail($id);
 
-        // You can also retrieve the year and quarter from the route parameters if needed
-
         // Assuming you need them in the view, you can pass them to the view as data
         return view('financials.editQuarter', compact('financial', 'year', 'quarter'));
     }
 
-    // public function updateQuarter($year, $quarter, $id, Request $request)
-    // {
-    //     $financial = Financial::findOrFail($id);
-    //     $request->validate([
-    //         'title' => ['required'],
-    //         'filepath' => ['nullable', 'mimes:pdf,doc'] // Adjust allowed file types as needed
-    //     ]);
-
-    //     // Update the financial record with the new values
-    //     $financial->title = $request->title;
-    //     $financial->year = $year;
-    //     $financial->quarter = $quarter;
-    //     $oldFileName = $financial->filepath;
-
-    //     // Check if a new file is uploaded and update it if necessary
-    //     if ($request->hasFile('filepath')) {
-    //         $originalName = $request->file('filepath')->getClientOriginalName();
-    //         $extension = $request->file('filepath')->getClientOriginalExtension();
-    //         $words = explode(' ', pathinfo($originalName, PATHINFO_FILENAME));
-    //         $uniqueWords = array_unique($words);
-    //         $cleanFileName = implode(' ', $uniqueWords);
-    //         $file_name = Str::slug($cleanFileName) . '-' . time() . '.' . $extension;
-    //         $dir = "uploads/reports/";
-    //         // Store the new file and get its path
-    //         $newFileName = $request->file('filepath')->storeAs($dir, $file_name);
-    //         if ($oldFileName) {
-    //             Storage::move($newFileName, $oldFileName);
-    //             $financial->filepath = $oldFileName;
-    //         } else {
-    //             $financial->filepath = $newFileName;
-    //         }
-    //     }
-    //     $financial->update();
-    //     return redirect()->route('financials.list')->with('success', 'Document updated successfully');
-    // }
     public function updateQuarter($year, $quarter, $id, Request $request)
     {
         $financial = Financial::findOrFail($id);
         $request->validate([
             'title' => ['required'],
-            'filepath' => ['nullable', 'mimes:pdf,doc']
+            'filepath' => ['nullable', 'mimes:pdf,doc'] // Adjust allowed file types as needed
         ]);
 
-        $this->processFileUpload($request, $financial);
+        // Update the financial record with the new values
         $financial->title = $request->title;
         $financial->year = $year;
         $financial->quarter = $quarter;
-        $financial->update();
+        $oldFileName = $financial->filepath;
 
-        return redirect()->route('financials.list')->with('success', 'Document updated successfully');
-    }
-
-     /**
-     * Common code for image.
-     */
-    private function processFileUpload($request, $financial)
-    {
+        // Check if a new file is uploaded and update it if necessary
         if ($request->hasFile('filepath')) {
-            $file = $request->file('filepath');
-            $originalName = $file->getClientOriginalName();
-            $extension = $file->getClientOriginalExtension();
-            $words = explode(' ', pathinfo($originalName, PATHINFO_FILENAME));
-            $uniqueWords = array_unique($words);
-            $cleanFileName = implode(' ', $uniqueWords);
-            $file_name = Str::slug($cleanFileName) . '-' . time() . '.' . $extension;
-            $dir = "uploads/reports";
-            $financial->filepath = $file->storeAs($dir, $file_name);
-        } else {
-            $financial->filepath = null;
+            // Get the directory path from the FileHelper
+            $dir = FileHelpers::fileUpdate('reports', $request);
+
+            //store image
+            $newFileName = $request->file('filepath')->storeAs($dir);
+            if ($oldFileName) {
+                Storage::move($newFileName, $oldFileName);
+                $financial->filepath = $oldFileName;
+                } else {
+                    $financial->filepath = $newFileName;
+                }
         }
+        $financial->update();
+        return redirect()->route('financials.list')->with('success', 'Financial Document updated successfully');
     }
 
     /**
@@ -327,12 +225,20 @@ class  FinancialController extends Controller
     {
         // Find the financial record by its ID
         $financial = Financial::findOrFail($id);
-    
+
         // Verify that the 'year' and 'quarter' in the URL match the record
         if ($financial->year == $year && $financial->quarter == $quarter) {
+            // Get the file path from the financial record
+            $filePath = $financial->filepath;
+
+            // Delete the associated file if it exists
+            if ($filePath && Storage::exists($filePath)) {
+                Storage::delete($filePath);
+            }
+
             // Perform the deletion of the financial record
             $financial->delete();
-            
+
             // Redirect to a success page or a different route as needed
             return redirect()->route('financials.list')->with('success', 'Quarter deleted successfully');
         } else {
@@ -340,4 +246,5 @@ class  FinancialController extends Controller
             return redirect()->route('financials.list')->with('error', 'Invalid quarter information');
         }
     }
+
 }
