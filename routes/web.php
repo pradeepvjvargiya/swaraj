@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\DocumentController;
-use App\Http\Controllers\FinancialController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;

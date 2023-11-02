@@ -8,10 +8,6 @@ class FileHelpers
 {
     public static function fileUpdate($page, Request $request)
     {
-        $request->validate([
-            'filepath' => ['nullable'],
-        ]);
-
         $originalName = $request->file('filepath')->getClientOriginalName();
         $extension = $request->file('filepath')->getClientOriginalExtension();
         $words = explode(' ', pathinfo($originalName, PATHINFO_FILENAME));
@@ -36,7 +32,10 @@ class FileHelpers
         {
             $dir = "uploads/".$file_name;
         }
-        return $dir;
+        // Store the image only if a file is provided
+        $file = $request->file('filepath')->storeAs($dir);
+
+        return $file;
     }
 }
 

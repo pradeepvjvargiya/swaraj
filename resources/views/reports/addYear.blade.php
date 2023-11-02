@@ -5,12 +5,12 @@
 @section('content')
     <div class="container">
         <h5 class="col-lg-12 mb-3 text-center">Add Year</h5>
-        <form class="col-lg-12 row" action="{{ route('reports.storeYear', $page) }}" method="post" enctype="multipart/form-data"
+        <form class="col-lg-6 row" action="{{ route('reports.storeYear', $page) }}" method="post" enctype="multipart/form-data"
             autocomplete="off">
             @csrf
-            <div class="row">
-                <label for="year" class="col-lg-4 col-form-label">Year:</label>
-                <div class="col-lg-8">
+            <div class="row mb-3">
+                <label for="year" class="col-sm-3 col-form-label">Year:</label>
+                <div class="col-sm-9">
                     <input type="text" name="year" id="year" value="{{ old('year') }}" class="form-control"
                         autocomplete="off" placeholder="2022-23">
                     @error('year')
@@ -18,15 +18,13 @@
                     @enderror
                 </div>
             </div>
-            <div class="row">
-                <div class="mb-3 col-lg-6 d-flex">
-                    <label for="filepath" class="col-lg-2 col-form-label">File</label>
-                    <div class="col-lg-8">
-                        <input type="file" name="filepath" id="filepath" class="form-control">
-                        @error('filepath')
-                            {{ $message }}
-                        @enderror
-                    </div>
+            <div class="row mb-3">
+                <label for="filepath" class="col-sm-3 col-form-label">File</label>
+                <div class="col-sm-9">
+                    <input type="file" name="filepath" id="filepath" class="form-control">
+                    @error('filepath')
+                        {{ $message }}
+                    @enderror
                 </div>
             </div>
             {{-- Add button --}}
@@ -36,6 +34,7 @@
                     <p onclick="add()" class="btn btn-primary">Add</p>
                     <input type="button" hidden id="onCancleClick" name="" value="Reset">
                     <p onclick="cancel()" class="btn btn-danger">Reset</p>
+                    <a href="{{ route('reports.list', ['page' => $page]) }}" class="btn btn-sm btn-warning mb-3">Back</a>
                 </div>
             </div>
         </form>

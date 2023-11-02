@@ -12,15 +12,11 @@ class DocumentController extends Controller
     /**
      * Display a listing of the resource.
      */
-     public function index($page)
-     {
-         $documents = Document::where('page', $page)
-                                ->orderBy("id", "desc")->paginate(5);
-         return view('documents.list', [
-            'documents' => $documents,
-            'page' => $page, // Pass the 'page' parameter to the view
-        ]);
-     }
+    public function index($page)
+    {
+        $documents = Document::where('page', $page)->orderBy("id", "desc")->get();
+        return view('documents.list', ['documents' => $documents, 'page' => $page]);
+    }
 
      /**
      * Show the form for creating a new resource.
@@ -47,15 +43,11 @@ class DocumentController extends Controller
         
         if ($request->hasFile('filepath')) {
             // Get the directory path from the FileHelper
-            $dir = FileHelpers::fileUpdate($page, $request);
+            $year_file_dir = FileHelpers::fileUpdate($page, $request);
           
             // Store the image only if a file is provided
-            $document->filepath = $request->file('filepath')->storeAs($dir);
-        } else {
-            // Handle the case when 'filepath' is empty or not provided
-            $document->filepath = '';
+            $document->filepath = $year_file_dir;
         }
-
         $document->user_id = auth()->user()->id;
         $document->save();
         return redirect("documents/{$page}/list")->with('success', 'Document added successfully');
@@ -91,11 +83,8 @@ class DocumentController extends Controller
         // Check if a new file is uploaded and update it if necessary
         if ($request->hasFile('filepath')) {
             // Get the directory path from the FileHelper
-            $dir = FileHelpers::fileUpdate($page, $request);
-
-            //store image
-            $newFileName = $request->file('filepath')->storeAs($dir);
-            if ($oldFileName) {
+            $newFileName  = FileHelpers::fileUpdate($page, $request);
+            if ($oldFileName) { 
                 Storage::move($newFileName, $oldFileName);
                 $document->filepath = $oldFileName;
                 } else {

@@ -10,18 +10,26 @@ use Illuminate\Support\Facades\Storage;
 class ReportController extends Controller
 {
     /**
+        * Create constructor for year (document in quarterly)
+    */
+    public $allowedPages = [];
+    public function __construct()
+    {
+        $this->allowedPages = ["financial", "shareholding-pattern"];
+    }
+    /**
      * Display a listing of the resource.
      */
     public function index($page)
     {
-        if ($page == 'financial' || $page == 'shareholding-pattern') {
+        if (in_array($page, $this->allowedPages))
+        {
             // Fetch reports based on the specific criteria for this page
-            $reports = Report::where('page', $page)
-                ->whereNull('quarter')
-                ->orderBy('id', 'desc')
-                ->get();
-    
-            return view('reports.list', compact('reports', 'page'));
+            $reports = Report::where('page', $page)->whereNull('quarter')->orderBy('id', 'desc')->get();
+            return view('reports.list', ['page' =>$page, 'reports' =>$reports]);
+        } else {
+            // Handle the case where $page is not one of the expected values
+            return abort(404); // Or any other appropriate action
         }
     }
     
@@ -30,7 +38,7 @@ class ReportController extends Controller
      */
     public function addYear($page)
     {
-        if ($page == 'financial' || $page == 'shareholding-pattern') {
+        if (in_array($page, $this->allowedPages)) {
             return view('reports.addYear', ['page' => $page]);
         } else {
             // Handle the case where $page is not one of the expected values
@@ -52,11 +60,11 @@ class ReportController extends Controller
         $reports->page = $page;
         $reports->year = $request->year;
         if ($request->hasFile('filepath')) {
-            $dir = FileHelpers::fileUpdate($page, $request); // Call the fileUpdate method
-            $reports->filepath = $request->file('filepath')->storeAs($dir);
-        } else {
-            // File is not uploaded, set filepath to null
-            $reports->filepath = null;
+            // Get the directory path from the FileHelper
+            $dir = FileHelpers::fileUpdate($page, $request);
+          
+            // Store the image only if a file is provided
+            $reports->filepath = $dir;
         }
         $reports->save();
         return redirect()->route('reports.list', $page)->with('success', 'Year added successfully');
@@ -67,10 +75,8 @@ class ReportController extends Controller
      */
     public function editYear($page, string $id)
     {
-        $report = Report::where('page', $page)
-            ->where('id', $id)
-            ->first();
-            return view('reports.editYear', compact('page', 'id', 'report'));
+        $report = Report::first();
+        return view('reports.editYear', compact('page', 'id', 'report'));
     }
 
     /**
@@ -93,11 +99,8 @@ class ReportController extends Controller
 
         // Check if a new file is uploaded and update it if necessary
         if ($request->hasFile('filepath')) {
-            // Use the fileUpdate helper function to determine the folder and get the file path
-            $dir = FileHelpers::fileUpdate($page, $request);
-
-            // Store the new file and get its path
-            $newFileName = $request->file('filepath')->storeAs($dir);
+            // Get the directory path from the FileHelper
+            $newFileName  = FileHelpers::fileUpdate($page, $request);
             if ($oldFileName) {
                 Storage::move($newFileName, $oldFileName);
                 $report->filepath = $oldFileName;
@@ -125,12 +128,11 @@ class ReportController extends Controller
         $year = Report::findOrFail($id);
 
         // Get the ID of the year's related quarters
-        $quarterIds = Report::where('year', $year->year)->pluck('id')->toArray();
+        $years = Report::where('year', $year->year);
 
         // Iterate through the quarters, retrieve file paths, and delete files
-        foreach ($quarterIds as $quarterId) {
-            $quarter = Report::findOrFail($quarterId);
-            $filePath = $quarter->filepath;
+        foreach ($years as $year) {
+            $filePath = $year->filepath;
 
             // Delete the associated file if it exists
             if ($filePath && Storage::exists($filePath)) {
@@ -149,12 +151,7 @@ class ReportController extends Controller
      */
     public function addQuarter($page, $year, $quarter)
     {
-        $report = Report::where('page', $page)
-            ->where('year', $year)
-            ->where('quarter', 'Q1')
-            ->get();
-
-        return view('reports.addQuarter', compact('report', 'page', 'year', 'quarter'));
+        return view('reports.addQuarter', compact('page', 'year', 'quarter'));
     }
 
      /**
@@ -174,15 +171,9 @@ class ReportController extends Controller
         $report->title = $request->title;
         if ($request->hasFile('filepath')) {
             // Get the directory path from the FileHelper
-            $dir = FileHelpers::fileUpdate($page, $request);
-
-            // Store the image only if a file is provided
-            $report->filepath = $request->file('filepath')->storeAs($dir);
-        // } else {
-        //     // Handle the case when 'filepath' is empty or not provided
-        //     $report->filepath = '';
+            $dir_quarter_file = FileHelpers::fileUpdate($page, $request);
+            $report->filepath = $dir_quarter_file;
         }
-
         $report->save();
         return redirect()->route('reports.list', $page)->with('success', 'Quarter added successfully');
     }
@@ -217,10 +208,10 @@ class ReportController extends Controller
         // Check if a new file is uploaded and update it if necessary
         if ($request->hasFile('filepath')) {
             // Get the directory path from the FileHelper
-            $dir = FileHelpers::fileUpdate($page, $request);
+            $dir_quarter_file = FileHelpers::fileUpdate($page, $request);
 
             //store image
-            $newFileName = $request->file('filepath')->storeAs($dir);
+            $newFileName = $dir_quarter_file;
             if ($oldFileName) {
                 Storage::move($newFileName, $oldFileName);
                 $report->filepath = $oldFileName;
