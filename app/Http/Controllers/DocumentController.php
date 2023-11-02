@@ -12,7 +12,7 @@ class DocumentController extends Controller
     /**
      * Display a listing of the resource.
      */
-     public function index($page, Request $request)
+     public function index($page)
      {
          $documents = Document::where('page', $page)
                                 ->orderBy("id", "desc")->paginate(5);
@@ -126,10 +126,6 @@ class DocumentController extends Controller
             $document->delete();
 
             return redirect("documents/{$page}/list")->with('success', 'Document deleted successfully');
-        } else {
-            // Document not found
-            return redirect("documents/{$page}/list")->with('error', 'Document not found');
         }
     }
-
 }

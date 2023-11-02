@@ -146,7 +146,7 @@ class  FinancialController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly store resource in storage.
      */
     public function storeQuarter($year, $quarter, Request $request)
     {

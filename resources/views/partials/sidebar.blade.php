@@ -15,7 +15,7 @@
         </a>
         <ul id="components-financial" class="nav-content collapse " data-bs-parent="#sidebar-nav">
             <li>
-                <a href="{{ url('financials/list') }}">
+                <a href="{{ url('reports/financial/list') }}">
                     <i class="bi bi-circle"></i><span>Financial</span>
                 </a>
             </li>
@@ -80,7 +80,7 @@
         </a>
         <ul id="components-shareholding-pattern" class="nav-content collapse " data-bs-parent="#sidebar-nav">
             <li>
-                <a href="{{ url('documents/shareholding-pattern/list') }}">
+                <a href="{{ url('reports/shareholding-pattern/list') }}">
                     <i class="bi bi-circle"></i><span>Shareholding Pattern</span>
                 </a>
             </li>
