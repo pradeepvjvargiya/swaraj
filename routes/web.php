@@ -37,22 +37,6 @@ Route::prefix('documents')->controller(DocumentController::class)->group(functio
     Route::get('/{page}/delete/{id}', 'destroy')->name('documents.destroy');
 });
 
-// Financial
-// Route::prefix('financials')->controller(FinancialController::class)->group(function () {
-//     Route::get('/list', 'index')->name('financials.list');
-//     Route::get('/addYear', 'addYear')->name('financials.addYear');
-//     Route::post('/storeYear', 'storeYear')->name('financials.store');
-//     Route::get('/edit/{id}', 'editYear')->name('financials.editYear');
-//     Route::put('/update/{id}', 'updateYear')->name('financials.updateYear');
-//     Route::get('/delete/{id}', 'destroy')->name('financials.destroy');
-//     // for financial quarter
-//     Route::get('/{year}/{quarter}/addQuarter', 'addQuarter')->name('financials.addQuarter');
-//     Route::post('/{year}/{quarter}/storeQuarter', 'storeQuarter')->name('financials.storeQuarter');
-//     Route::get('/{year}/{quarter}/{id}/editQuarter', 'editQuarter')->name('financials.editQuarter');
-//     Route::put('/{year}/{quarter}/{id}/updateQuarter', 'updateQuarter')->name('financials.updateQuarter');
-//     Route::get('/{year}/{quarter}/{id}/destroyQuarter', 'destroyQuarter')->name('financials.destroyQuarter');
-// });
-
 // Reports
 Route::prefix('reports')->controller(ReportController::class)->group(function () {
     Route::get('/{page}/list', 'index')->name('reports.list');
