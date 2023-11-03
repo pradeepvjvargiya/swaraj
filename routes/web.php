@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\HomeWebController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -16,9 +17,30 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 
-Route::get('/', function () {
-    return view('auth/login');
+
+Route::get('/', [HomeWebController::class, 'index'])->name('frontends.layout');
+// For static pages
+Route::get('/board-of-directors', function () {
+    return view('frontends.board-of-directors');
 });
+Route::get('/company-profile', function () {
+    return view('frontends.company-profile');
+});
+Route::get('/group-of-companies', function () {
+    return view('frontends.group-of-companies');
+});
+Route::get('/plant', function () {
+    return view('frontends.plant');
+});
+Route::get('/products', function () {
+    return view('frontends.products');
+});
+Route::get('/vision-mission', function () {
+    return view('frontends.vision-mission');
+});
+// Route::get('/', function () {
+//     return view('auth/login');
+// });
 
 Route::post('/logout', [App\Http\Controllers\LoginController::class, 'logout'])->name('logout');
 

@@ -151,7 +151,7 @@
                                         {{ $doc->title }}
                                     @endif
                                 </div>
-                                <div class="col my-auto">
+                                <div class="col">
                                     <a href="{{ route('reports.editQuarter', ['page' => $page, 'year' => $doc->year, 'quarter' => 'Q3', 'id' => $doc->id]) }}"
                                         data-toggle="tooltip" data-placement="top" title="Edit File"><i
                                             class="fas fa-pencil-alt"></i></a>
