@@ -18,26 +18,42 @@ use Illuminate\Support\Facades\Auth;
 */
 
 
-Route::get('/', [HomeWebController::class, 'index'])->name('frontends.layout');
-// For static pages
-Route::get('/board-of-directors', function () {
-    return view('frontends.board-of-directors');
-});
+Route::get('/', [HomeWebController::class, 'index'])->name('frontends.index');
+
+// company-profile page
 Route::get('/company-profile', function () {
     return view('frontends.company-profile');
 });
+
+// // board-of-directors page
+// Route::get('/board-of-directors', function () {
+//     return view('frontends.board-of-directors');
+// });
+
+
+Route::get('/board-of-directors', [HomeWebController::class, 'team'])->name('frontends.board-of-directors');
+
+
+// group-of-companies page
 Route::get('/group-of-companies', function () {
     return view('frontends.group-of-companies');
 });
+
+// group-of-companies page
 Route::get('/plant', function () {
     return view('frontends.plant');
 });
+
+// products page
 Route::get('/products', function () {
     return view('frontends.products');
 });
+
+// vision-mission page
 Route::get('/vision-mission', function () {
     return view('frontends.vision-mission');
 });
+
 // Route::get('/', function () {
 //     return view('auth/login');
 // });

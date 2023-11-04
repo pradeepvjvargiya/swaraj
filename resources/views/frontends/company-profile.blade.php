@@ -254,6 +254,7 @@
 
 </div>
 <!-- Content END-->
+@endsection
 
 <script>
     jQuery(document).ready(function() {
