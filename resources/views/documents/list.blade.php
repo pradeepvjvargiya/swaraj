@@ -46,7 +46,7 @@
                             <div class="row">
                                 <div class="col">
                                     @if ($document->filepath && Storage::exists($document->filepath))
-                                        <a href="{{ asset('/storage/' . $document->filepath) }}" target="_blank"
+                                        <a href="{{ Storage::url($document->filepath) }}" target="_blank"
                                             data-toggle="tooltip" data-placement="top"
                                             title="View File">{{ $document->title }}</a>
                                     @else

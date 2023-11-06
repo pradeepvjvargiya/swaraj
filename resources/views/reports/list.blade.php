@@ -57,7 +57,7 @@
                         <div class="row">
                             <div class="col">
                                 @if ($report->filepath && Storage::exists($report->filepath))
-                                    <a href="{{ asset($report->filepath) }}" target="_blank" data-toggle="tooltip"
+                                    <a href="{{ Storage::url($report->filepath) }}" target="_blank" data-toggle="tooltip"
                                         data-placement="top" title="View File">
                                         {{ $report->year }}
                                     </a>
@@ -82,7 +82,7 @@
                             <div class="row">
                                 <div class="col">
                                     @if ($doc->filepath && Storage::exists($doc->filepath))
-                                        <a href="{{ asset($doc->filepath) }}" target="_blank" data-toggle="tooltip"
+                                        <a href="{{ Storage::url($doc->filepath) }}" target="_blank" data-toggle="tooltip"
                                             data-placement="top" title="View File">{{ $doc->title }}</a>
                                     @else
                                         <!-- File doesn't exist, so don't generate the link -->
@@ -113,7 +113,7 @@
                             <div class="row">
                                 <div class="col">
                                     @if ($doc->filepath && Storage::exists($doc->filepath))
-                                        <a href="{{ asset($doc->filepath) }}" target="_blank" data-toggle="tooltip"
+                                        <a href="{{ Storage::url($doc->filepath) }}" target="_blank" data-toggle="tooltip"
                                             data-placement="top" title="View File">{{ $doc->title }}</a>
                                     @else
                                         <!-- File doesn't exist, so don't generate the link -->
@@ -144,7 +144,7 @@
                             <div class="row">
                                 <div class="col">
                                     @if ($doc->filepath && Storage::exists($doc->filepath))
-                                        <a href="{{ asset($doc->filepath) }}" target="_blank" data-toggle="tooltip"
+                                        <a href="{{ Storage::url($doc->filepath) }}" target="_blank" data-toggle="tooltip"
                                             data-placement="top" title="View File">{{ $doc->title }}</a>
                                     @else
                                         <!-- File doesn't exist, so don't generate the link -->
@@ -177,7 +177,7 @@
                             <div class="row">
                                 <div class="col">
                                     @if ($doc->filepath && Storage::exists($doc->filepath))
-                                        <a href="{{ asset($doc->filepath) }}" target="_blank" data-toggle="tooltip"
+                                        <a href="{{ Storage::url($doc->filepath) }}" target="_blank" data-toggle="tooltip"
                                             data-placement="top" title="View File">{{ $doc->title }}</a>
                                     @else
                                         <!-- File doesn't exist, so don't generate the link -->

@@ -17,6 +17,7 @@ class ReportController extends Controller
     {
         $this->allowedPages = ["financial", "shareholding-pattern"];
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -26,7 +27,7 @@ class ReportController extends Controller
         {
             // Fetch reports based on the specific criteria for this page
             $reports = Report::where('page', $page)->whereNull('quarter')->orderBy('id', 'desc')->get();
-            return view('reports.list', ['page' =>$page, 'reports' =>$reports]);
+            return view('reports.list', ['page' => $page, 'reports' => $reports]);
         } else {
             // Handle the case where $page is not one of the expected values
             return abort(404); // Or any other appropriate action
@@ -52,7 +53,7 @@ class ReportController extends Controller
     public function storeYear($page, Request $request)
     {
         $request->validate([
-            'year' => ['required'],
+            'year' => ['required', 'unique:reports,year'],
             'filepath' => ['nullable', 'mimes:pdf,doc'] // Adjust allowed file types as needed
         ]);
 

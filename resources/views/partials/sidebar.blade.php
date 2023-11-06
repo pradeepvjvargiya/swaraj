@@ -59,7 +59,7 @@
         <ul id="components-general-meetings" class="nav-content collapse " data-bs-parent="#sidebar-nav">
             <li>
                 <a href="{{ url('documents/general-meetings/list') }}">
-                    <i class="bi bi-circle"></i><span>Notices</span>
+                    <i class="bi bi-circle"></i><span>General Meetings</span>
                 </a>
             </li>
             <li>

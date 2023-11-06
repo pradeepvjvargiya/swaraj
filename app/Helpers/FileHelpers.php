@@ -13,8 +13,8 @@ class FileHelpers
         $words = explode(' ', pathinfo($originalName, PATHINFO_FILENAME));
         $uniqueWords = array_unique($words);
         $cleanFileName = implode(' ', $uniqueWords);
-        $file_name = Str::slug($cleanFileName) . '-' . time() . '.' . $extension;
-
+        // $file_name = Str::slug($cleanFileName) . '-' . time() . '.' . $extension;
+        $file_name = $originalName.".".$extension;
         // Your condition here to determine the folder based on your criteria
         if ($page == 'notices' || $page == 'outcomes' || $page == 'general-meetings' || $page == 'voting-results') {
             $folder = 'notices';

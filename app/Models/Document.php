@@ -14,4 +14,8 @@ class Document extends Model
         'title',
         'filepath'
     ];
+
+    protected $casts = [
+        'date' => 'date'
+    ];
 }

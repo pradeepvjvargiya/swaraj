@@ -17,22 +17,19 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 
-
 Route::get('/', [HomeWebController::class, 'index'])->name('frontends.index');
+
+Auth::routes();
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::post('/logout', [App\Http\Controllers\LoginController::class, 'logout'])->name('logout');
 
 // company-profile page
 Route::get('/company-profile', function () {
     return view('frontends.company-profile');
 });
 
-// // board-of-directors page
-// Route::get('/board-of-directors', function () {
-//     return view('frontends.board-of-directors');
-// });
-
-
+// board-of-directors (dynamic page)
 Route::get('/board-of-directors', [HomeWebController::class, 'team'])->name('frontends.board-of-directors');
-
 
 // group-of-companies page
 Route::get('/group-of-companies', function () {
@@ -54,15 +51,73 @@ Route::get('/vision-mission', function () {
     return view('frontends.vision-mission');
 });
 
+// contact page
+Route::get('/contact', function () {
+    return view('frontends.contact');
+});
+
+// investor-contact page
+Route::get('/investor-contact', function () {
+    return view('frontends.investor-contact');
+});
+
+// csr page
+Route::get('/csr', function () {
+    return view('frontends.csr');
+});
+
+// management-committee page
+Route::get('/management-committee', function () {
+    return view('frontends.management-committee');
+});
+
+// corporate-governance page
+Route::get('/corporate-governance', function () {
+    return view('frontends.corporate-governance');
+});
+
+// *********invester desk start*********
+// *********documents start*********
+// annual-return
+Route::get('/annual-return', [HomeWebController::class, 'document'])->name('frontends.annual-return');
+
+// annual-return
+Route::get('/notices', [HomeWebController::class, 'document'])->name('frontends.notices');
+
+// outcomes
+Route::get('/outcomes', [HomeWebController::class, 'document'])->name('frontends.outcomes');
+
+// general-meetings
+Route::get('/general-meetings', [HomeWebController::class, 'document'])->name('frontends.general-meetings');
+
+// voting-results
+Route::get('/voting-results', [HomeWebController::class, 'document'])->name('frontends.voting-results');
+
+// policy
+Route::get('/policy', [HomeWebController::class, 'document'])->name('frontends.policy');
+
+// prospectus
+Route::get('/prospectus', [HomeWebController::class, 'document'])->name('frontends.prospectus');
+
+// listing-compliances
+Route::get('/listing-compliances', [HomeWebController::class, 'document'])->name('frontends.listing-compliances');
+
+// *********documents end*********
+
+// *********reports start*********
+// financial
+Route::get('/financial', [HomeWebController::class, 'report'])->name('frontends.financial');
+
+// shareholding-pattern
+Route::get('/shareholding-pattern', [HomeWebController::class, 'report'])->name('frontends.shareholding-pattern');
+
+// *********reports end*********
+// *********invester desk end*********
+
+
 // Route::get('/', function () {
 //     return view('auth/login');
 // });
-
-Route::post('/logout', [App\Http\Controllers\LoginController::class, 'logout'])->name('logout');
-
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 // Documents
 Route::prefix('documents')->controller(DocumentController::class)->group(function () {
