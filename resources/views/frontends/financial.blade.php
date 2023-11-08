@@ -36,9 +36,6 @@
         </nav>
 
         <div class="section-full call-action wow fadeIn" data-wow-duration="2s" data-wow-delay="0.2s">
-            <?php
-            //include_once('financial_nav.php');
-            ?>
             <div class="container pb-4">
                 <h1 class="text-center">FINANCIALS</h1>
                 <table class="table table-bordered text-center">
@@ -56,34 +53,38 @@
                                     target="_blank">{{ $report->year }}</a>
                             </td>
                             <td>
-                                @foreach ($report->getQuarterDocs($report->year, 'Q1') as $doc)
+                                @foreach ($report->getQuarterDocs($page, $report->year, 'Q1') as $doc)
                                     @if ($doc->filepath && Storage::exists($doc->filepath))
-                                    <a href="{{ asset('/storage/' .$doc->filepath) }}" target="_blank" data-toggle="tooltip"
-                                        data-placement="top" title="View File">{{ $doc->title }}</a>
+                                        <a href="{{ asset('/storage/' . $doc->filepath) }}" target="_blank"
+                                            data-toggle="tooltip" data-placement="top"
+                                            title="View File">{{ $doc->title }}</a>
                                     @endif
                                 @endforeach
                             </td>
                             <td>
-                                @foreach ($report->getQuarterDocs($report->year, 'Q2') as $doc)
+                                @foreach ($report->getQuarterDocs($page, $report->year, 'Q2') as $doc)
                                     @if ($doc->filepath && Storage::exists($doc->filepath))
-                                        <a href="{{ asset('/storage/' .$doc->filepath) }}" target="_blank" data-toggle="tooltip"
-                                            data-placement="top" title="View File">{{ $doc->title }}</a>
+                                        <a href="{{ asset('/storage/' . $doc->filepath) }}" target="_blank"
+                                            data-toggle="tooltip" data-placement="top" title="View File">
+                                            {{ $doc->title }}</a>
                                     @endif
                                 @endforeach
                             </td>
                             <td>
-                                @foreach ($report->getQuarterDocs($report->year, 'Q3') as $doc)
+                                @foreach ($report->getQuarterDocs($page, $report->year, 'Q3') as $doc)
                                     @if ($doc->filepath && Storage::exists($doc->filepath))
-                                        <a href="{{ asset('/storage/' .$doc->filepath) }}" target="_blank" data-toggle="tooltip"
-                                            data-placement="top" title="View File">{{ $doc->title }}</a>
+                                        <a href="{{ asset('/storage/' . $doc->filepath) }}" target="_blank"
+                                            data-toggle="tooltip" data-placement="top"
+                                            title="View File">{{ $doc->title }}</a>
                                     @endif
                                 @endforeach
                             </td>
                             <td>
-                                @foreach ($report->getQuarterDocs($report->year, 'Q4') as $doc)
+                                @foreach ($report->getQuarterDocs($page, $report->year, 'Q4') as $doc)
                                     @if ($doc->filepath && Storage::exists($doc->filepath))
-                                        <a href="{{ asset('/storage/' .$doc->filepath) }}" target="_blank" data-toggle="tooltip"
-                                            data-placement="top" title="View File">{{ $doc->title }}</a>
+                                        <a href="{{ asset('/storage/' . $doc->filepath) }}" target="_blank"
+                                            data-toggle="tooltip" data-placement="top"
+                                            title="View File">{{ $doc->title }}</a>
                                     @endif
                                 @endforeach
                             </td>
@@ -92,7 +93,6 @@
                 </table>
             </div>
         </div>
-
     </div>
     <!--END Content-->
 @endsection

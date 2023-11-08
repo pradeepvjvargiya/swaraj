@@ -38,15 +38,15 @@
                         <th>Date</th>
                         <th>General Meeting</th>
                     </tr>
-                    <tr>
-                        @foreach ($documents as $document)
+                    @foreach ($documents as $document)
+                        <tr>
                             <td>{{ $document->date->format('d/m/Y') }}</td>
                             <td>
                                 <a href="{{ asset('/storage/' . $document->filepath) }}"
                                     target="_blank">{{ $document->title }}</a>
                             </td>
-                        @endforeach
-                    </tr>
+                        </tr>
+                    @endforeach
                 </table>
             </div>
         </div>

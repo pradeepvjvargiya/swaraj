@@ -50,33 +50,46 @@ class ReportController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function storeYear($page, Request $request)
+
+     public function storeYear($page, Request $request)
     {
         $request->validate([
-            'year' => ['required', 'unique:reports,year'],
+            'year' => ['required'],
             'filepath' => ['nullable', 'mimes:pdf,doc'] // Adjust allowed file types as needed
         ]);
 
-        $reports = new Report();
-        $reports->page = $page;
-        $reports->year = $request->year;
-        if ($request->hasFile('filepath')) {
-            // Get the directory path from the FileHelper
-            $dir = FileHelpers::fileUpdate($page, $request);
-          
-            // Store the image only if a file is provided
-            $reports->filepath = $dir;
-        }
-        $reports->save();
-        return redirect()->route('reports.list', $page)->with('success', 'Year added successfully');
-    }
+        // Check if a report with the same year and page already exists
+        $existingReportCount = Report::where('page', $page)
+            ->where('year', $request->year)
+            ->count();
 
+        if ($existingReportCount === 0) {
+            // Create a new report only if it doesn't already exist
+            $report = new Report();
+            $report->page = $page;
+            $report->year = $request->year;
+            if ($request->hasFile('filepath')) {
+                // Get the directory path from the FileHelper
+                $dir = FileHelpers::fileUpdate($page, $request);
+                // Store the file path only if a file is provided
+                $report->filepath = $dir;
+            }
+            $report->save();
+            return redirect()->route('reports.list', $page)->with('success', 'Year added successfully');
+        } else {
+            // Report with the same year and page already exists
+            return redirect()->back()->with('error', 'Year already exist.');
+        }
+    }
+     
     /**
      * Show the form for editing the specified resource.
      */
     public function editYear($page, string $id)
     {
-        $report = Report::first();
+        $report = Report::where('page', $page)
+                        ->Where('id', $id)
+                        ->first();
         return view('reports.editYear', compact('page', 'id', 'report'));
     }
 
@@ -118,34 +131,35 @@ class ReportController extends Controller
 
          $report->update();
          return redirect()->route('reports.list', $page)->with('success', 'Year added successfully');
-        }
-
+    }
+   
     /**
      * Remove the specified resource from storage.
-     */
+    */
     public function destroy($page, $id)
     {
         // Find the year to be deleted
         $year = Report::findOrFail($id);
-
+        
         // Get the ID of the year's related quarters
-        $years = Report::where('year', $year->year);
-
+        $quarters = Report::where('year', $year->year)->get();
+    
         // Iterate through the quarters, retrieve file paths, and delete files
-        foreach ($years as $year) {
-            $filePath = $year->filepath;
-
+        foreach ($quarters as $quarter) {
+            $filePath = $quarter->filepath;
+    
             // Delete the associated file if it exists
             if ($filePath && Storage::exists($filePath)) {
                 Storage::delete($filePath);
             }
         }
-
+    
         // Delete the year and its related quarters
         Report::where('year', $year->year)->delete();
+    
         return redirect()->route('reports.list', $page)->with('success', 'Year and related quarters and files deleted successfully');
     }
-
+    
     /**
      * For Add Quarter.
      * Show the form for creating a new resource.
@@ -162,21 +176,33 @@ class ReportController extends Controller
     {
         $request->validate([
             'title' => ['required', 'string', 'max:100'],
-            'filepath' => ['nullable', 'mimes:pdf,doc'] // Adjust allowed file types as needed
+            'filepath' => ['required', 'mimes:pdf,doc'] // Adjust allowed file types as needed
         ]);
 
-        $report = new Report();
-        $report->page = $page;
-        $report->year = $year;
-        $report->quarter = $quarter;
-        $report->title = $request->title;
-        if ($request->hasFile('filepath')) {
-            // Get the directory path from the FileHelper
-            $dir_quarter_file = FileHelpers::fileUpdate($page, $request);
-            $report->filepath = $dir_quarter_file;
-        }
-        $report->save();
-        return redirect()->route('reports.list', $page)->with('success', 'Quarter added successfully');
+        // Check if a report with the same year and page already exists
+        $existingReportCount = Report::where('page', $page)
+                            ->where('year', $year)
+                            ->where('quarter', $quarter)
+                            ->count();
+        if ($existingReportCount === 0) {
+                $report = new Report();
+                $report->page = $page;
+                $report->year = $year;
+                $report->quarter = $quarter;
+                $report->title = $request->title;
+                
+                if ($request->hasFile('filepath')) {
+                    // Get the directory path from the FileHelper
+                    $dir_quarter_file = FileHelpers::fileUpdate($page, $request);
+                    $report->filepath = $dir_quarter_file;
+                }
+                $report->save();
+                
+                return redirect()->route('reports.list', $page)->with('success', 'Quarter added successfully');
+            } else {
+                // Return with an error message indicating that the year and quarter combination is not unique
+                return redirect()->back()->with('error', 'The year and quarter combination already exists on this page.');
+            }
     }
 
     /**
@@ -184,8 +210,11 @@ class ReportController extends Controller
      */
     public function editQuarter($page, $year, $quarter, $id)
     {
-        // Retrieve the financial record based on the 'id'
-        $report = Report::findOrFail($id);
+        $report = Report::where('page', $page)
+                        ->Where('year', $year)
+                        ->Where('quarter', $quarter)
+                        ->Where('id', $id)
+                        ->first();
 
         // Assuming you need them in the view, you can pass them to the view as data
         return view('reports.editQuarter', compact('report', 'page', 'year', 'quarter'));
@@ -196,32 +225,42 @@ class ReportController extends Controller
         $report = Report::findOrFail($id);
         $request->validate([
             'title' => ['required'],
-            'filepath' => ['nullable', 'mimes:pdf,doc'] // Adjust allowed file types as needed
+            'filepath' => ['required', 'mimes:pdf,doc'] // Adjust allowed file types as needed
         ]);
 
-        // Update the financial record with the new values
-        $report->title = $request->title;
-        $report->page = $page;
-        $report->year = $year;
-        $report->quarter = $quarter;
-        $oldFileName = $report->filepath;
+         // Check if the 'year' and 'quarter' combination is unique within the specified 'page'
+         $yearQuarterExists = Report::where('page', $page)
+         ->where('year', $year)
+         ->where('quarter', $quarter)
+         ->exists();
 
-        // Check if a new file is uploaded and update it if necessary
-        if ($request->hasFile('filepath')) {
-            // Get the directory path from the FileHelper
-            $dir_quarter_file = FileHelpers::fileUpdate($page, $request);
+        if (!$yearQuarterExists) {
+            $report->title = $request->title;
+            $report->page = $page;
+            $report->year = $year;
+            $report->quarter = $quarter;
+            $oldFileName = $report->filepath;
 
-            //store image
-            $newFileName = $dir_quarter_file;
-            if ($oldFileName) {
-                Storage::move($newFileName, $oldFileName);
-                $report->filepath = $oldFileName;
-                } else {
-                    $report->filepath = $newFileName;
-                }
+            // Check if a new file is uploaded and update it if necessary
+            if ($request->hasFile('filepath')) {
+                // Get the directory path from the FileHelper
+                $dir_quarter_file = FileHelpers::fileUpdate($page, $request);
+
+                //store image
+                $newFileName = $dir_quarter_file;
+                if ($oldFileName) {
+                    Storage::move($newFileName, $oldFileName);
+                    $report->filepath = $oldFileName;
+                    } else {
+                        $report->filepath = $newFileName;
+                    }
+            }
+            $report->update();
+            return redirect()->route('reports.list', $page)->with('success', 'Document updated successfully');
+        } else {
+        // Return with an error message indicating that the year and quarter combination is not unique
+        return redirect()->back()->with('error', 'The year and quarter combination already exists on this page.');
         }
-        $report->update();
-        return redirect()->route('reports.list', $page)->with('success', 'Document updated successfully');
     }
 
     /**
@@ -247,6 +286,10 @@ class ReportController extends Controller
 
             // Redirect to a success page or a different route as needed
             return redirect()->route('reports.list', $page)->with('success', 'Quarter deleted successfully');
+        } else {
+            // Handle the case where the 'year' and 'quarter' in the URL do not match the record
+            return redirect()->back()->with('error', 'Quarter not found or does not match the specified year and quarter.');
         }
     }
+
 }

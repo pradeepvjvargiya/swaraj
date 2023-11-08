@@ -42,13 +42,6 @@
                         </div>
                     </div>
                 @endforeach
-
-                {{-- <div class="row mb-5">
-                    <div class="col-lg-12 text-white">
-                        <a href="/uploads/reports/Annual-Return-2021-22.pdf" target="_blank" class="">
-                            <h2 class="title">Annual Return 2021-22</h2>
-                        </a>
-                    </div> --}}
             </div>
         </div>
     </div>

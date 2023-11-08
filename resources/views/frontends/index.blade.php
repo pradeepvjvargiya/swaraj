@@ -138,15 +138,15 @@
                                 <a href="/company-profile" class="site-button btnhover16">Read More</a>
                             </div>
                             <!--
-                       <div class="content-bx1">
-                        <div class="section-head">
-                         <h2 class="title text-center">Welcome to Swaraj Suiting Limited </h2>
-                         <p>The company was incorporated in year 2003, with the main object of manufacturing, trading and dealing in textiles. At present the company has a manufacturing unit at Bhilwara (Rajasthan), which is a weaving unit. </p>
-                        </div>
-                        <a href="portfolio-details.html" class="site-button btnhover21 black m-b10">Company Profile</a>
-                        <a href="contact-1.html" class="site-button btnhover21 black m-r10 m-b10">Contact us</a>
-                       </div>
-                       -->
+                           <div class="content-bx1">
+                            <div class="section-head">
+                             <h2 class="title text-center">Welcome to Swaraj Suiting Limited </h2>
+                             <p>The company was incorporated in year 2003, with the main object of manufacturing, trading and dealing in textiles. At present the company has a manufacturing unit at Bhilwara (Rajasthan), which is a weaving unit. </p>
+                            </div>
+                            <a href="portfolio-details.html" class="site-button btnhover21 black m-b10">Company Profile</a>
+                            <a href="contact-1.html" class="site-button btnhover21 black m-r10 m-b10">Contact us</a>
+                           </div>
+                           -->
                         </div>
                     </div>
                 </div>

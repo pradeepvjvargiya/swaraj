@@ -42,8 +42,7 @@
                         <tr>
                             <td>{{ $document->date->format('d/m/Y') }}</td>
                             <td>
-                                <a href="{{ asset('/storage/' . $document->filepath) }}"
-                                    target="_blank">{{ $document->title }}</a>
+                                <a href="{{ Storage::url($document->filepath) }}" target="_blank">{{ $document->title }}</a>
                             </td>
                         </tr>
                     @endforeach

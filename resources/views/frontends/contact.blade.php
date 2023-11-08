@@ -4,16 +4,16 @@
     <div class="page-content bg-white">
         <!-- inner page banner -->
         <!--
-      <div class="section-full content-inner-2 bg-primary wow fadeIn " data-wow-duration="2s" data-wow-delay="0.2s" style="background-image: url(&quot;images/background/map-bg.png&quot;); visibility: visible; animation-duration: 2s; animation-delay: 0.2s; animation-name: fadeIn;height:350px;padding-top:150px">
-       <div class="container">
-        <div class="row">
-         <div class="col-lg-12 text-center service-info">
-          <h2 class="title text-white">Contact Us</h2>
-         </div>
-        </div>
-       </div>
-      </div>
-      -->
+          <div class="section-full content-inner-2 bg-primary wow fadeIn " data-wow-duration="2s" data-wow-delay="0.2s" style="background-image: url(&quot;images/background/map-bg.png&quot;); visibility: visible; animation-duration: 2s; animation-delay: 0.2s; animation-name: fadeIn;height:350px;padding-top:150px">
+           <div class="container">
+            <div class="row">
+             <div class="col-lg-12 text-center service-info">
+              <h2 class="title text-white">Contact Us</h2>
+             </div>
+            </div>
+           </div>
+          </div>
+          -->
         <div class="section-full call-action bg-primary wow fadeIn" data-wow-duration="2s" data-wow-delay="0.3s"
             style="visibility: visible; animation-duration: 2s; animation-delay: 0.3s; animation-name: fadeIn;height:300px;padding-top:150px">
             <div class="container">

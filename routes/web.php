@@ -114,11 +114,6 @@ Route::get('/shareholding-pattern', [HomeWebController::class, 'report'])->name(
 // *********reports end*********
 // *********invester desk end*********
 
-
-// Route::get('/', function () {
-//     return view('auth/login');
-// });
-
 // Documents
 Route::prefix('documents')->controller(DocumentController::class)->group(function () {
     Route::get('/{page}/list', 'index')->name('documents.list');
@@ -138,7 +133,7 @@ Route::prefix('reports')->controller(ReportController::class)->group(function ()
     Route::put('/{page}/updateYear/{id}', 'updateYear')->name('reports.updateYear');
     Route::get('/{page}/deleteYear/{id}', 'destroy')->name('reports.destroy');
 
-    // for financial quarter
+    // for quarter
     Route::get('/{page}/{year}/{quarter}/addQuarter', 'addQuarter')->name('reports.addQuarter');
     Route::post('/{page}/{year}/{quarter}/storeQuarter', 'storeQuarter')->name('reports.storeQuarter');
     Route::get('/{page}/{year}/{quarter}/{id}/editQuarter', 'editQuarter')->name('reports.editQuarter');

@@ -32,9 +32,9 @@ class DocumentController extends Controller
     public function store($page, Request $request)
     {
         $request->validate([
-            'title' => ['required', 'string', 'max:100'],
-            'date' => ['required'],
-            'filepath' => ['nullable']
+            'title' => ['nullable', 'string'],
+            'date' => ['nullable'],
+            'filepath' => ['nullable', 'mimes:pdf,doc,mp3,mp4'] // Adjust allowed file types as needed
         ]);
         $document = new Document();
         $document->page = $page;
@@ -59,8 +59,8 @@ class DocumentController extends Controller
     public function edit($page, string $id)
     {
         $document = Document::where('page', $page)
-            ->Where('id', $id)
-            ->first();
+                            ->Where('id', $id)
+                            ->first();
         return view('documents.view', compact('page', 'id', 'document'));
     }
 
@@ -71,8 +71,9 @@ class DocumentController extends Controller
     {
         $document = Document::findOrFail($id);
         $request->validate([
-            'title' => ['required', 'string', 'max:100'],
-            'date' => ['required'],
+            'title' => ['nullable', 'string'],
+            'date' => ['nullable'],
+            'filepath' => ['nullable', 'mimes:pdf,doc,mp3,mp4'] // Adjust allowed file types as needed
         ]);
 
         // Update the document fields
@@ -103,10 +104,8 @@ class DocumentController extends Controller
     {
         // Find the document respective page record
         $document = Document::find($id);
-        
         if ($document) {
             $filePath = $document->filepath;
-            
             if ($filePath && Storage::exists($filePath)) {
                 Storage::delete($filePath);
             }

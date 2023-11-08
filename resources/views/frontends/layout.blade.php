@@ -79,9 +79,9 @@
         }); /*ready*/
     </script>
     <script>
-        function openModal(key,name){
+        function openModal(key, name) {
             $("#bioModalLabel").html(name);
-            let desc = $("#bio_"+key).html();
+            let desc = $("#bio_" + key).html();
             $("#bioModalDescription").html(desc);
             $('#bioModal').modal('show');
         }

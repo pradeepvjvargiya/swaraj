@@ -4,9 +4,17 @@
 
 @section('content')
     <div class="container">
-        <h5 class="col-lg-12 mb-3 text-center">Add Document</h5>
-        <form class="col-lg-6 row" action="{{ route('documents.store', $page) }}" method="post" enctype="multipart/form-data"
-            autocomplete="off">
+        <div class="row mb-3">
+            <div class="col-sm-12">
+                <label for="page-category" class="form-label" style="color: black;">Page Category:</label>
+                <span id="page-category">{{ $page }}</span>
+            </div>
+            <div class="col-sm-12">
+                <label for="year" class="form-label" style="color: black;">Add Document:</label>
+            </div>
+        </div>
+        <form class="col-lg-6 row" action="{{ route('documents.store', $page) }}" method="post"
+            enctype="multipart/form-data" autocomplete="off">
             @csrf
             {{-- Title --}}
             <div class="row mb-3">

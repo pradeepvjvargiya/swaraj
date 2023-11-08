@@ -78,7 +78,7 @@
 
                     {{-- Start Relevent year Quarter Q1 --}}
                     <td>
-                        @foreach ($report->getQuarterDocs($report->year, 'Q1') as $doc)
+                        @foreach ($report->getQuarterDocs($page, $report->year, 'Q1') as $doc)
                             <div class="row">
                                 <div class="col">
                                     @if ($doc->filepath && Storage::exists($doc->filepath))
@@ -109,7 +109,7 @@
 
                     {{-- Start Relevent year Quarter Q2 --}}
                     <td>
-                        @foreach ($report->getQuarterDocs($report->year, 'Q2') as $doc)
+                        @foreach ($report->getQuarterDocs($page, $report->year, 'Q2') as $doc)
                             <div class="row">
                                 <div class="col">
                                     @if ($doc->filepath && Storage::exists($doc->filepath))
@@ -140,7 +140,7 @@
 
                     {{-- Start Relevent year Quarter Q3 --}}
                     <td>
-                        @foreach ($report->getQuarterDocs($report->year, 'Q3') as $doc)
+                        @foreach ($report->getQuarterDocs($page, $report->year, 'Q3') as $doc)
                             <div class="row">
                                 <div class="col">
                                     @if ($doc->filepath && Storage::exists($doc->filepath))
@@ -173,7 +173,7 @@
 
                     {{-- Start Relevent year Quarter Q4 --}}
                     <td>
-                        @foreach ($report->getQuarterDocs($report->year, 'Q4') as $doc)
+                        @foreach ($report->getQuarterDocs($page, $report->year, 'Q4') as $doc)
                             <div class="row">
                                 <div class="col">
                                     @if ($doc->filepath && Storage::exists($doc->filepath))

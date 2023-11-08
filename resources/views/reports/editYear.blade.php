@@ -4,7 +4,15 @@
 
 @section('content')
     <div class="container">
-        <h5 class="col-lg-12 mb-3 text-center">Edit Year</h5>
+        <div class="row mb-3">
+            <div class="col-sm-12">
+                <label for="page-category" class="form-label" style="color: black;">Page Category:</label>
+                <span id="page-category">{{ $page }}</span>
+            </div>
+            <div class="col-sm-12">
+                <label for="year" class="form-label" style="color: black;">Edit Year:</label>
+            </div>
+        </div>
         <form class="col-lg-6 row" action="{{ route('reports.updateYear', ['page' => $report->page, 'id' => $report->id]) }}"
             method="post" enctype="multipart/form-data" autocomplete="off">
             @csrf

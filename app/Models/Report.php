@@ -15,10 +15,11 @@ class Report extends Model
         'filepath'
     ];
 
-    public function getQuarterDocs($year, $quarter)
+    public function getQuarterDocs($page, $year, $quarter)
     {
-        return Report::where('year', $year)
-            ->where('quarter', $quarter)
-            ->get();
+        return Report::where('page', $page)
+                    ->where('year', $year)
+                    ->where('quarter', $quarter)
+                    ->get();
     }
 }

@@ -4,7 +4,19 @@
 
 @section('content')
     <div class="container">
-        <h5 class="col-lg-12 mb-3 text-center">Edit Quarter</h5>
+        <div class="row mb-3">
+            <div class="col-sm-12">
+                <label for="page-category" class="form-label" style="color: black;">Page Category:</label>
+                <span id="page-category">{{ $page }}</span>
+            </div>
+            <div class="col-sm-12">
+                <label for="year" class="form-label" style="color: black;">Year:</label>
+                <span id="year">{{ $year }}</span>
+            </div>
+            <div class="col-sm-12">
+                <label for="quarter" class="form-label" style="color: black;">Edit Quarter:</label>
+            </div>
+        </div>
         <form class="col-lg-6 row"
             action="{{ route('reports.updateQuarter', ['page' => $report->page, 'year' => $report->year, 'quarter' => $report->quarter, 'id' => $report->id]) }}"
             method="post" enctype="multipart/form-data" autocomplete="off">

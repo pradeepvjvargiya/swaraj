@@ -11,7 +11,7 @@ class HomeWebController extends Controller
 {
     public function index()
     {
-        return view('frontends.index');    
+        return view('frontends.index');
     }
 
     public function team()
