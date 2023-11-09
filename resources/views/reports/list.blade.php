@@ -17,7 +17,21 @@
         vertical-align: middle;
     }
 </style>
+
 @section('content')
+
+    <!-- Start Page Title -->
+    <div class="pagetitle">
+        <h1>{{ $page }}</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+                <li class="breadcrumb-item active">List</li>
+            </ol>
+        </nav>
+    </div>
+    <!-- End Page Title -->
+
     <div class="container">
         {{-- Start Add Year  --}}
         <div class="mb-2">
@@ -95,7 +109,8 @@
                                             class="fas fa-pencil-alt"></i></a>
                                     <a href="{{ route('reports.destroyQuarter', ['page' => $page, 'year' => $doc->year, 'quarter' => 'Q1', 'id' => $doc->id]) }}"
                                         data-toggle="tooltip" data-placement="top" title="Delete Quarter"
-                                        onclick="return confirmDelete()"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                                        onclick="return confirmDelete()"><i class="fa fa-trash" aria-hidden="true"
+                                            style="margin-left: 10px;"></i></a>
                                 </div>
                             </div>
                         @endforeach
@@ -126,7 +141,8 @@
                                             class="fas fa-pencil-alt"></i></a>
                                     <a href="{{ route('reports.destroyQuarter', ['page' => $page, 'year' => $doc->year, 'quarter' => 'Q2', 'id' => $doc->id]) }}"
                                         data-toggle="tooltip" data-placement="top" title="Delete Quarter"
-                                        onclick="return confirmDelete()"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                                        onclick="return confirmDelete()"><i class="fa fa-trash" aria-hidden="true"
+                                            style="margin-left: 10px;"></i></a>
                                 </div>
                             </div>
                         @endforeach
@@ -157,8 +173,8 @@
                                             class="fas fa-pencil-alt"></i></a>
                                     <a href="{{ route('reports.destroyQuarter', ['page' => $page, 'year' => $doc->year, 'quarter' => 'Q3', 'id' => $doc->id]) }}"
                                         data-toggle="tooltip" data-placement="top" title="Delete Quarter"
-                                        onclick="return confirmDelete()"><i class="fa fa-trash"
-                                            aria-hidden="true"></i></a>
+                                        onclick="return confirmDelete()"><i class="fa fa-trash" aria-hidden="true"
+                                            style="margin-left: 10px;"></i></a>
                                 </div>
                             </div>
                         @endforeach
@@ -177,8 +193,9 @@
                             <div class="row">
                                 <div class="col">
                                     @if ($doc->filepath && Storage::exists($doc->filepath))
-                                        <a href="{{ Storage::url($doc->filepath) }}" target="_blank" data-toggle="tooltip"
-                                            data-placement="top" title="View File">{{ $doc->title }}</a>
+                                        <a href="{{ Storage::url($doc->filepath) }}" target="_blank"
+                                            data-toggle="tooltip" data-placement="top"
+                                            title="View File">{{ $doc->title }}</a>
                                     @else
                                         <!-- File doesn't exist, so don't generate the link -->
                                         {{ $doc->title }}
@@ -190,8 +207,8 @@
                                             class="fas fa-pencil-alt"></i></a>
                                     <a href="{{ route('reports.destroyQuarter', ['page' => $page, 'year' => $doc->year, 'quarter' => 'Q4', 'id' => $doc->id]) }}"
                                         data-toggle="tooltip" data-placement="top" title="Delete Quarter"
-                                        onclick="return confirmDelete()"><i class="fa fa-trash"
-                                            aria-hidden="true"></i></a>
+                                        onclick="return confirmDelete()"><i class="fa fa-trash" aria-hidden="true"
+                                            style="margin-left: 10px;"></i></a>
                                 </div>
                             </div>
                         @endforeach

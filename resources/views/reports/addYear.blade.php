@@ -10,15 +10,19 @@
             </div>
         @endif
 
-        <div class="row mb-3">
-            <div class="col-sm-12">
-                <label for="page-category" class="form-label" style="color: black;">Page Category:</label>
-                <span id="page-category">{{ $page }}</span>
-            </div>
-            <div class="col-sm-12">
-                <label for="year" class="form-label" style="color: black;">Add Year:</label>
-            </div>
+        <!-- Start Page Title -->
+        <div class="pagetitle">
+            <h1>{{ $page }}</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+                    <li class="breadcrumb-item"><a
+                            href="{{ route('reports.list', ['page' => $page]) }}">{{ $page }}</a></li>
+                    <li class="breadcrumb-item active">Add Year</li>
+                </ol>
+            </nav>
         </div>
+        <!-- End Page Title -->
 
         <form class="col-lg-6 row" action="{{ route('reports.storeYear', $page) }}" method="post"
             enctype="multipart/form-data" autocomplete="off">
@@ -46,9 +50,9 @@
             <div class="row">
                 <div class="mt-3 col-lg-6">
                     <input type="submit" hidden id="add_btn" name="">
-                    <p onclick="add()" class="btn btn-primary">Add</p>
+                    <p onclick="add()" class="btn btn-sm btn-primary">Add</p>
                     <input type="button" hidden id="onCancleClick" name="" value="Reset">
-                    <p onclick="cancel()" class="btn btn-danger">Reset</p>
+                    <p onclick="cancel()" class="btn btn-sm btn-danger">Reset</p>
                     <a href="{{ route('reports.list', ['page' => $page]) }}" class="btn btn-sm btn-warning mb-3">Back</a>
                 </div>
             </div>

@@ -4,17 +4,22 @@
 
 @section('content')
     <div class="container">
-        <div class="row mb-3">
-            <div class="col-sm-12">
-                <label for="page-category" class="form-label" style="color: black;">Page Category:</label>
-                <span id="page-category">{{ $page }}</span>
-            </div>
-            <div class="col-sm-12">
-                <label for="year" class="form-label" style="color: black;">Add Document:</label>
-            </div>
+        <!-- Start Page Title -->
+        <div class="pagetitle">
+            <h1>{{ $page }}</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+                    <li class="breadcrumb-item"><a
+                            href="{{ route('documents.list', ['page' => $page]) }}">{{ $page }}</a></li>
+                    <li class="breadcrumb-item active">Add Document</li>
+                </ol>
+            </nav>
         </div>
-        <form class="col-lg-6 row" action="{{ route('documents.store', $page) }}" method="post"
-            enctype="multipart/form-data" autocomplete="off">
+        <!-- End Page Title -->
+
+        <form class="col-lg-6 row" action="{{ route('documents.store', $page) }}" method="post" enctype="multipart/form-data"
+            autocomplete="off">
             @csrf
             {{-- Title --}}
             <div class="row mb-3">

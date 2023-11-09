@@ -20,8 +20,8 @@ use Illuminate\Support\Facades\Auth;
 Route::get('/', [HomeWebController::class, 'index'])->name('frontends.index');
 
 Auth::routes();
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::post('/logout', [App\Http\Controllers\LoginController::class, 'logout'])->name('logout');
+Route::get('/admin', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
 
 // company-profile page
 Route::get('/company-profile', function () {

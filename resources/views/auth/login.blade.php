@@ -101,21 +101,12 @@
                                             <button class="btn btn-primary w-100" type="submit">{{ __('Login') }}
                                             </button>
                                         </div>
-                                        @if (Route::has('password.request'))
-                                            <a class="btn btn-link" href="{{ route('password.request') }}">
-                                                {{ __('Forgot Your Password?') }}
-                                            </a>
-                                        @endif
-                                        {{-- <div class="col-12">
-                                            <p class="small mb-0">Don't have account? <a
-                                                    href="pages-register.html">Create an account</a></p>
-                                        </div> --}}
                                     </form>
                                 </div>
                             </div>
-
                             <div class="credits">
-                                Designed by <a href="https://www.swarajsuiting.com/">Swaraj Suitings</a>
+                                Developed by <a href="https://github.com/pradeepvjvargiya/swaraj"
+                                    target="_blank">Pradeep Vijayvargiya</a>
                             </div>
 
                         </div>

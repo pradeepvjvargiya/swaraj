@@ -9,20 +9,19 @@
         }
     </style>
 
-    <!-- Start Page Title -->
-    <div class="pagetitle">
-        <h1>Profile</h1>
-        <nav>
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item">Document</li>
-                <li class="breadcrumb-item active">Profile</li>
-            </ol>
-        </nav>
-    </div>
-    <!-- End Page Title -->
-
     <section class="section profile">
+        <!-- Start Page Title -->
+        <div class="pagetitle">
+            <h1>{{ $page }}</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+                    <li class="breadcrumb-item"><a
+                            href="{{ route('documents.list', ['page' => $page]) }}">{{ $page }}</a></li>
+                </ol>
+            </nav>
+        </div>
+        <!-- End Page Title -->
         <div class="row">
             <div class="col-xl-8">
                 <div class="card">

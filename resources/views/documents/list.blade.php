@@ -19,6 +19,18 @@
 </style>
 
 @section('content')
+    <!-- Start Page Title -->
+    <div class="pagetitle">
+        <h1>{{ $page }}</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+                <li class="breadcrumb-item active">List</li>
+            </ol>
+        </nav>
+    </div>
+    <!-- End Page Title -->
+
     <div class="container">
         <div class="mb-2">
             <a href="{{ url('/documents', ['page' => $page, 'add']) }}" class="btn btn-sm btn-primary" data-toggle="tooltip"

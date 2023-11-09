@@ -4,15 +4,20 @@
 
 @section('content')
     <div class="container">
-        <div class="row mb-3">
-            <div class="col-sm-12">
-                <label for="page-category" class="form-label" style="color: black;">Page Category:</label>
-                <span id="page-category">{{ $page }}</span>
-            </div>
-            <div class="col-sm-12">
-                <label for="year" class="form-label" style="color: black;">Edit Year:</label>
-            </div>
+
+        <!-- Start Page Title -->
+        <div class="pagetitle">
+            <h1>{{ $page }}</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('reports.list', ['page' => $page]) }}">{{ $page }}</a></li>
+                    <li class="breadcrumb-item active">Edit Year</li>
+                </ol>
+            </nav>
         </div>
+        <!-- End Page Title -->
+
         <form class="col-lg-6 row" action="{{ route('reports.updateYear', ['page' => $report->page, 'id' => $report->id]) }}"
             method="post" enctype="multipart/form-data" autocomplete="off">
             @csrf
