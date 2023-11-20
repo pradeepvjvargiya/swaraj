@@ -1,8 +1,12 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HomeWebController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,8 +24,8 @@ use Illuminate\Support\Facades\Auth;
 Route::get('/', [HomeWebController::class, 'index'])->name('frontends.index');
 
 Auth::routes();
-Route::get('/admin', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
+Route::get('/admin', [HomeController::class, 'index'])->name('home');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // company-profile page
 Route::get('/company-profile', function () {
@@ -140,3 +144,16 @@ Route::prefix('reports')->controller(ReportController::class)->group(function ()
     Route::put('/{page}/{year}/{quarter}/{id}/updateQuarter', 'updateQuarter')->name('reports.updateQuarter');
     Route::get('/{page}/{year}/{quarter}/{id}/destroyQuarter', 'destroyQuarter')->name('reports.destroyQuarter');}
 );
+
+//User Manager
+Route::prefix('users')->controller(UserController::class)->middleware('auth')->group(function () {
+    Route::get('/index', 'index')->name('users.index');
+    Route::get('/add', 'create')->name('users.create');
+    Route::post('/store', 'store')->name('users.store');
+    Route::get('/edit/{id}', 'edit')->name('users.edit');
+    Route::put('/update/{id}', 'update')->name('users.update');
+    Route::get('/delete/{id}', 'destroy')->name('users.destroy');
+
+    // Log User
+    Route::get('/log', 'userLog')->name('users.log');
+});

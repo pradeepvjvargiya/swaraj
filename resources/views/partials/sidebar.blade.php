@@ -133,4 +133,25 @@
         </ul>
     </li>
     <!-- End Listing Compliances Nav -->
+
+    {{-- Start User Manager Nav --}}
+    @if (auth()->user()->role == 'super-admin')
+        <li class="nav-item">
+            <a class="nav-link collapsed" data-bs-target="#components-userManager" href="{{ route('users.index') }}">
+                <i class="bi bi-menu-button-wide"></i><span>User Manager</span>
+            </a>
+        </li>
+    @endif
+    {{-- End User Manager Nav --}}
+
+    {{-- Start User Log Nav --}}
+    @if (auth()->user()->role == 'super-admin')
+        <li class="nav-item">
+            <a class="nav-link collapsed" data-bs-target="#components-log" href="{{ route('users.log') }}">
+                <i class="bi bi-menu-button-wide"></i><span>Log</span>
+            </a>
+        </li>
+    @endif
+    {{-- End User Log Nav --}}
+
 </ul>

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('quarter')->nullable();
             $table->string('title')->nullable();
             $table->string('filepath')->nullable();
+            $table->string('user_id');
             $table->timestamps();
         });
     }

@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
             $table->string('page');
-            $table->date('date');
-            $table->string('title');
-            $table->string('filepath');
+            $table->date('date')->default('null');
+            $table->string('title')->default('null');
+            $table->string('filepath')->default('null');
+            $table->string('user_id');
             $table->timestamps();
         });
     }

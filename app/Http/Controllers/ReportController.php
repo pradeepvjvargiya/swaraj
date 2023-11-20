@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\FileHelpers;
+use App\Helpers\UserLogHelpers;
 use App\Models\Report;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -51,7 +52,7 @@ class ReportController extends Controller
      * Store a newly created resource in storage.
      */
 
-     public function storeYear($page, Request $request)
+    public function storeYear($page, Request $request)
     {
         $request->validate([
             'year' => ['required'],
@@ -74,7 +75,23 @@ class ReportController extends Controller
                 // Store the file path only if a file is provided
                 $report->filepath = $dir;
             }
+            $report->user_id = auth()->user()->id;
             $report->save();
+
+            // Log user action using LogHelpers
+            $inserted_data = json_encode([
+                'title' => $report['title'],
+                'year' => $report['year'],
+                'filepath' => $report['filepath'],
+            ]);
+            UserLogHelpers::user_log_action(
+                auth()->user()->id,
+                $report->page,
+                $report->id,
+                null,
+                null,
+                $inserted_data);
+
             return redirect()->route('reports.list', $page)->with('success', 'Year added successfully');
         } else {
             // Report with the same year and page already exists
@@ -104,6 +121,9 @@ class ReportController extends Controller
             'filepath' => ['nullable', 'mimes:pdf,doc'] // Adjust allowed file types as needed
         ]);
 
+        // Store the current document data for logging
+        $prev_data = $report->toArray();
+
         $oldYear = $report->year; // Store the old year value
 
         // Update the financial record with the new values
@@ -122,14 +142,33 @@ class ReportController extends Controller
                 $report->filepath = $newFileName;
             }
         }
+
         // Check if the year has changed before updating the database
         if ($report->isDirty('year')) {
             // Perform the update only if 'year' has changed
             Report::where('year', $oldYear)
                 ->update(['year' => $request->year]);
         }
+        $report->update();
+        //get changes fields only
+                $changes = $report->getChanges();
+                if($changes) {
+                    $old_data = [];
+                    foreach($changes as $key => $value) {
+                        $old_data[$key] = $prev_data[$key];
+                    }
 
-         $report->update();
+                    // update_log
+                    UserLogHelpers::user_log_action(
+                        auth()->user()->id,
+                        $report->page,
+                        $report->id,
+                        null, // Assuming report_id is not used in this context
+                        json_encode($old_data),
+                        json_encode($changes)
+                    );
+                }
+
          return redirect()->route('reports.list', $page)->with('success', 'Year added successfully');
     }
    
@@ -196,7 +235,23 @@ class ReportController extends Controller
                     $dir_quarter_file = FileHelpers::fileUpdate($page, $request);
                     $report->filepath = $dir_quarter_file;
                 }
+                $report->user_id = auth()->user()->id;
                 $report->save();
+                
+                 // Log user action using LogHelpers
+            $inserted_data = json_encode([
+                'title' => $report['title'],
+                'date' => $report['date'],
+                'quarter' => $report['quarter'],
+                'filepath' => $report['filepath'],
+            ]);
+            UserLogHelpers::user_log_action(
+                auth()->user()->id,
+                $report->page,
+                $report->id,
+                null,
+                null,
+                $inserted_data);
                 
                 return redirect()->route('reports.list', $page)->with('success', 'Quarter added successfully');
             } else {
@@ -223,44 +278,65 @@ class ReportController extends Controller
     public function updateQuarter($page, $year, $quarter, $id, Request $request)
     {
         $report = Report::findOrFail($id);
+
         $request->validate([
-            'title' => ['required'],
-            'filepath' => ['required', 'mimes:pdf,doc'] // Adjust allowed file types as needed
+            'title' => 'required',
+            'filepath' => 'required|mimes:pdf,doc',
         ]);
 
-         // Check if the 'year' and 'quarter' combination is unique within the specified 'page'
-         $yearQuarterExists = Report::where('page', $page)
-         ->where('year', $year)
-         ->where('quarter', $quarter)
-         ->exists();
+        // Store the current document data for logging
+        $prev_data = $report->toArray();
 
-        if (!$yearQuarterExists) {
-            $report->title = $request->title;
-            $report->page = $page;
-            $report->year = $year;
-            $report->quarter = $quarter;
-            $oldFileName = $report->filepath;
+        // Check if the 'year' and 'quarter' combination is unique within the specified 'page'
+        $yearQuarterExists = Report::where('page', $page)
+            ->where('year', $year)
+            ->where('quarter', $quarter)
+            ->where('id', '!=', $id) // Exclude the current report from the check
+            ->exists();
 
-            // Check if a new file is uploaded and update it if necessary
-            if ($request->hasFile('filepath')) {
-                // Get the directory path from the FileHelper
-                $dir_quarter_file = FileHelpers::fileUpdate($page, $request);
-
-                //store image
-                $newFileName = $dir_quarter_file;
-                if ($oldFileName) {
-                    Storage::move($newFileName, $oldFileName);
-                    $report->filepath = $oldFileName;
-                    } else {
-                        $report->filepath = $newFileName;
-                    }
-            }
-            $report->update();
-            return redirect()->route('reports.list', $page)->with('success', 'Document updated successfully');
-        } else {
-        // Return with an error message indicating that the year and quarter combination is not unique
-        return redirect()->back()->with('error', 'The year and quarter combination already exists on this page.');
+        if ($yearQuarterExists) {
+            return redirect()->back()->with('error', 'The specified year and quarter combination already exists for another report.');
         }
+
+        // Update report attributes
+        $report->title = $request->title;
+        $report->page = $page;
+        $report->year = $year;
+        $report->quarter = $quarter;
+
+        // Check if a new file is uploaded and update it if necessary
+        if ($request->hasFile('filepath')) {
+            $newFileName = FileHelpers::fileUpdate($page, $request);
+
+            if ($report->filepath) {
+                Storage::move($newFileName, $report->filepath);
+            } else {
+                $report->filepath = $newFileName;
+            }
+        }
+
+        // Save the changes
+        $report->save();
+
+        //get changes fields only
+        $changes = $report->getChanges();
+        if($changes) {
+            $old_data = [];
+            foreach($changes as $key => $value) {
+                $old_data[$key] = $prev_data[$key];
+            }
+
+            // update_log
+            UserLogHelpers::user_log_action(
+                auth()->user()->id,
+                $report->page,
+                $report->id,
+                null, // Assuming report_id is not used in this context
+                json_encode($old_data),
+                json_encode($changes)
+            );
+        }
+        return redirect()->route('reports.list', $page)->with('success', 'Document updated successfully');
     }
 
     /**

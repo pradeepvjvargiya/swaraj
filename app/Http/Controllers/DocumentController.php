@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\FileHelpers;
-use App\Models\Document;
+use App\Helpers\UserLogHelpers;
+use App\Models\Document;    
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -18,9 +19,9 @@ class DocumentController extends Controller
         return view('documents.list', ['documents' => $documents, 'page' => $page]);
     }
 
-     /**
+    /**
      * Show the form for creating a new resource.
-     */
+    */
     public function create($page)
     {
         return view('documents.add', ['page' => $page]);
@@ -40,16 +41,31 @@ class DocumentController extends Controller
         $document->page = $page;
         $document->title = $request->title;
         $document->date = $request->date;
-        
         if ($request->hasFile('filepath')) {
+
             // Get the directory path from the FileHelper
             $year_file_dir = FileHelpers::fileUpdate($page, $request);
-          
+
             // Store the image only if a file is provided
             $document->filepath = $year_file_dir;
         }
+        
         $document->user_id = auth()->user()->id;
         $document->save();
+
+        // Log user action using LogHelpers
+        $inserted_data = json_encode([
+            'title' => $document['title'],
+            'date' => $document['date'],
+            'filepath' => $document['filepath'],
+        ]);
+        UserLogHelpers::user_log_action(
+            auth()->user()->id,
+            $document->page,
+            $document->id,
+            null,
+            null,
+            $inserted_data);
         return redirect("documents/{$page}/list")->with('success', 'Document added successfully');
     }
 
@@ -76,6 +92,9 @@ class DocumentController extends Controller
             'filepath' => ['nullable', 'mimes:pdf,doc,mp3,mp4'] // Adjust allowed file types as needed
         ]);
 
+        // Store the current document data for logging
+        $prev_data = $document->toArray();
+
         // Update the document fields
         $document->title = $request->title;
         $document->date = $request->date;
@@ -91,9 +110,27 @@ class DocumentController extends Controller
                 } else {
                     $document->filepath = $newFileName;
                 }
-            $document->user_id = auth()->user()->id;
         }
         $document->update();
+
+        //get changes fields only
+        $changes = $document->getChanges();
+        if($changes) {
+            $old_data = [];
+            foreach($changes as $key => $value) {
+                $old_data[$key] = $prev_data[$key];
+            }
+
+            // update_log
+            UserLogHelpers::user_log_action(
+                auth()->user()->id,
+                $document->page,
+                $document->id,
+                null, // Assuming report_id is not used in this context
+                json_encode($old_data),
+                json_encode($changes)
+            );
+        }
         return redirect("documents/{$page}/list")->with('success', 'Document updated successfully');
     }
 
