@@ -18,6 +18,14 @@
         </div>
         <!-- End Page Title -->
 
+        {{-- display error message start --}}
+        @if (session('error'))
+            <div class="alert alert-warning">
+                {{ session('error') }}
+            </div>
+        @endif
+        {{-- display error message end --}}
+
         <form class="col-lg-6 row" action="{{ route('documents.store', $page) }}" method="post" enctype="multipart/form-data"
             autocomplete="off">
             @csrf

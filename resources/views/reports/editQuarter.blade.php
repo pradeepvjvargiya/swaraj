@@ -17,15 +17,14 @@
             </nav>
         </div>
         <!-- End Page Title -->
-        {{-- @if ($errors->any())
-            <div class="alert alert-danger">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
+
+        {{-- display error message start --}}
+        @if (session('error'))
+            <div class="alert alert-warning">
+                {{ session('error') }}
             </div>
-        @endif --}}
+        @endif
+        {{-- display error message end --}}
 
         <form class="col-lg-6 row"
             action="{{ route('reports.updateQuarter', ['page' => $report->page, 'year' => $report->year, 'quarter' => $report->quarter, 'id' => $report->id]) }}"

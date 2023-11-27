@@ -26,6 +26,7 @@
             <div class="col-xl-8">
                 <div class="card">
                     <div class="card-body pt-3">
+
                         <!-- Bordered Tabs -->
                         <ul class="nav nav-tabs nav-tabs-bordered">
                             <li class="nav-item">
@@ -52,6 +53,14 @@
                         </div><!-- End Bordered Tabs -->
 
                         <!-- Profile Edit -->
+                        {{-- display error message start --}}
+                        @if (session('error'))
+                            <div class="alert alert-warning">
+                                {{ session('error') }}
+                            </div>
+                        @endif
+                        {{-- display error message end --}}
+
                         <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
                             <form action="{{ url('documents/' . $page . '/view/' . $id) }}" method="post"
                                 enctype="multipart/form-data" autocomplete="off">
